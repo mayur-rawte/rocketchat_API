@@ -4,6 +4,8 @@ import mimetypes
 import os
 import re
 import requests
+import hashlib
+
 
 from rocketchat_API.APIExceptions.RocketExceptions import RocketConnectionException, RocketAuthenticationException, \
     RocketMissingParamException
@@ -215,6 +217,11 @@ class RocketChat:
     def users_forgot_password(self, email, **kwargs):
         """Send email to reset your password."""
         return self.__call_api_post('users.forgotPassword', email=email, data=kwargs)
+
+    def user_change_password(self, email, current_password, new_password, **kwargs):
+        password_hash = hashlib.sha256(current_password)
+        return self.__call_api_post('users.updateOwnBasicInfo', email=email, current_password=password_hash.hexdigest(),
+                                    new_password=new_password, kwargs=kwargs)
 
     # Chat
 
